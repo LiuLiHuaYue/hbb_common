@@ -61,16 +61,7 @@ lazy_static::lazy_static! {
     pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
-    pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = {
-		let mut map = HashMap::new();
-		map.insert("access-mode".into(), "full".into());
-		map.insert("hide-security-settings".into(), "Y".into());
-		map.insert("hide-network-settings".into(), "Y".into());
-		map.insert("hide-server-settings".into(), "Y".into());
-		map.insert("hide-proxy-settings".into(), "Y".into());
-		map.insert("password".into(), "asdf780515".into());
-		RwLock::new(map)
-	};
+    pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
     pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = {
 		let mut map = HashMap::new();
 		map.insert("access-mode".into(), "full".into());
