@@ -69,8 +69,8 @@ lazy_static::lazy_static! {
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
-	let mut map = HashMap::new();
-		map.insert("access-mode".to_string(), "Y".to_string());
+		let mut map = HashMap::new();
+		map.insert("access-mode".to_string(), "full".to_string());
 		map.insert("hide-security-settings".to_string(), "Y".to_string());
 		map.insert("hide-network-settings".to_string(), "Y".to_string());
 		map.insert("hide-server-settings".to_string(), "Y".to_string());
