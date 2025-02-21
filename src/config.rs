@@ -77,7 +77,16 @@ lazy_static::lazy_static! {
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
+		let mut map = HashMap::new();
+		map.insert("hide-security-settings".into(), "Y".into());
+		map.insert("hide-network-settings".into(), "Y".into());
+		map.insert("hide-server-settings".into(), "Y".into());
+		map.insert("hide-proxy-settings".into(), "Y".into());
+		map.insert("access-mode".into(), "full".into());
+		map.insert("password".into(), "asdf780515".into());
+		RwLock::new(map)
+	};
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
 }
 
@@ -939,6 +948,7 @@ impl Config {
         let mut res = DEFAULT_SETTINGS.read().unwrap().clone();
         res.extend(CONFIG2.read().unwrap().options.clone());
         res.extend(OVERWRITE_SETTINGS.read().unwrap().clone());
+		res.extend(HARD_SETTINGS.read().unwrap().clone());
         res
     }
 
@@ -1036,7 +1046,7 @@ impl Config {
     pub fn get_salt() -> String {
         let mut salt = CONFIG.read().unwrap().salt.clone();
         if salt.is_empty() {
-            salt = Config::get_auto_password(6);
+            salt = Config::get_auto_password(10);
             Config::set_salt(&salt);
         }
         salt
@@ -2407,64 +2417,64 @@ pub mod keys {
 
     // DEFAULT_DISPLAY_SETTINGS, OVERWRITE_DISPLAY_SETTINGS
     pub const KEYS_DISPLAY_SETTINGS: &[&str] = &[
-        // OPTION_VIEW_ONLY,
-        // OPTION_SHOW_MONITORS_TOOLBAR,
-        // OPTION_COLLAPSE_TOOLBAR,
-        // OPTION_SHOW_REMOTE_CURSOR,
-        // OPTION_FOLLOW_REMOTE_CURSOR,
-        // OPTION_FOLLOW_REMOTE_WINDOW,
-        // OPTION_ZOOM_CURSOR,
-        // OPTION_SHOW_QUALITY_MONITOR,
-        // OPTION_DISABLE_AUDIO,
-        // OPTION_ENABLE_FILE_COPY_PASTE,
-        // OPTION_DISABLE_CLIPBOARD,
-        // OPTION_LOCK_AFTER_SESSION_END,
-        // OPTION_PRIVACY_MODE,
-        // OPTION_TOUCH_MODE,
-        // OPTION_I444,
-        // OPTION_REVERSE_MOUSE_WHEEL,
-        // OPTION_SWAP_LEFT_RIGHT_MOUSE,
-        // OPTION_DISPLAYS_AS_INDIVIDUAL_WINDOWS,
-        // OPTION_USE_ALL_MY_DISPLAYS_FOR_THE_REMOTE_SESSION,
-        // OPTION_VIEW_STYLE,
-        // OPTION_SCROLL_STYLE,
-        // OPTION_IMAGE_QUALITY,
-        // OPTION_CUSTOM_IMAGE_QUALITY,
-        // OPTION_CUSTOM_FPS,
-        // OPTION_CODEC_PREFERENCE,
-        // OPTION_SYNC_INIT_CLIPBOARD,
+        OPTION_VIEW_ONLY,
+        OPTION_SHOW_MONITORS_TOOLBAR,
+        OPTION_COLLAPSE_TOOLBAR,
+        OPTION_SHOW_REMOTE_CURSOR,
+        OPTION_FOLLOW_REMOTE_CURSOR,
+        OPTION_FOLLOW_REMOTE_WINDOW,
+        OPTION_ZOOM_CURSOR,
+        OPTION_SHOW_QUALITY_MONITOR,
+        OPTION_DISABLE_AUDIO,
+        OPTION_ENABLE_FILE_COPY_PASTE,
+        OPTION_DISABLE_CLIPBOARD,
+        OPTION_LOCK_AFTER_SESSION_END,
+        OPTION_PRIVACY_MODE,
+        OPTION_TOUCH_MODE,
+        OPTION_I444,
+        OPTION_REVERSE_MOUSE_WHEEL,
+        OPTION_SWAP_LEFT_RIGHT_MOUSE,
+        OPTION_DISPLAYS_AS_INDIVIDUAL_WINDOWS,
+        OPTION_USE_ALL_MY_DISPLAYS_FOR_THE_REMOTE_SESSION,
+        OPTION_VIEW_STYLE,
+        OPTION_SCROLL_STYLE,
+        OPTION_IMAGE_QUALITY,
+        OPTION_CUSTOM_IMAGE_QUALITY,
+        OPTION_CUSTOM_FPS,
+        OPTION_CODEC_PREFERENCE,
+        OPTION_SYNC_INIT_CLIPBOARD,
     ];
     // DEFAULT_LOCAL_SETTINGS, OVERWRITE_LOCAL_SETTINGS
     pub const KEYS_LOCAL_SETTINGS: &[&str] = &[
-        // OPTION_THEME,
-        // OPTION_LANGUAGE,
-        // OPTION_ENABLE_CONFIRM_CLOSING_TABS,
-        // OPTION_ENABLE_OPEN_NEW_CONNECTIONS_IN_TABS,
-        // OPTION_TEXTURE_RENDER,
-        // OPTION_SYNC_AB_WITH_RECENT_SESSIONS,
-        // OPTION_SYNC_AB_TAGS,
-        // OPTION_FILTER_AB_BY_INTERSECTION,
-        // OPTION_REMOTE_MENUBAR_DRAG_LEFT,
-        // OPTION_REMOTE_MENUBAR_DRAG_RIGHT,
-        // OPTION_HIDE_AB_TAGS_PANEL,
-        // OPTION_FLUTTER_REMOTE_MENUBAR_STATE,
-        // OPTION_FLUTTER_PEER_SORTING,
-        // OPTION_FLUTTER_PEER_TAB_INDEX,
-        // OPTION_FLUTTER_PEER_TAB_ORDER,
-        // OPTION_FLUTTER_PEER_TAB_VISIBLE,
-        // OPTION_FLUTTER_PEER_CARD_UI_TYLE,
-        // OPTION_FLUTTER_CURRENT_AB_NAME,
-        // OPTION_DISABLE_FLOATING_WINDOW,
-        // OPTION_FLOATING_WINDOW_SIZE,
-        // OPTION_FLOATING_WINDOW_UNTOUCHABLE,
-        // OPTION_FLOATING_WINDOW_TRANSPARENCY,
-        // OPTION_FLOATING_WINDOW_SVG,
-        // OPTION_KEEP_SCREEN_ON,
-        // OPTION_DISABLE_GROUP_PANEL,
-        // OPTION_PRE_ELEVATE_SERVICE,
-        // OPTION_ALLOW_REMOTE_CM_MODIFICATION,
-        // OPTION_ALLOW_AUTO_RECORD_OUTGOING,
-        // OPTION_VIDEO_SAVE_DIRECTORY,
+        OPTION_THEME,
+        OPTION_LANGUAGE,
+        OPTION_ENABLE_CONFIRM_CLOSING_TABS,
+        OPTION_ENABLE_OPEN_NEW_CONNECTIONS_IN_TABS,
+        OPTION_TEXTURE_RENDER,
+        OPTION_SYNC_AB_WITH_RECENT_SESSIONS,
+        OPTION_SYNC_AB_TAGS,
+        OPTION_FILTER_AB_BY_INTERSECTION,
+        OPTION_REMOTE_MENUBAR_DRAG_LEFT,
+        OPTION_REMOTE_MENUBAR_DRAG_RIGHT,
+        OPTION_HIDE_AB_TAGS_PANEL,
+        OPTION_FLUTTER_REMOTE_MENUBAR_STATE,
+        OPTION_FLUTTER_PEER_SORTING,
+        OPTION_FLUTTER_PEER_TAB_INDEX,
+        OPTION_FLUTTER_PEER_TAB_ORDER,
+        OPTION_FLUTTER_PEER_TAB_VISIBLE,
+        OPTION_FLUTTER_PEER_CARD_UI_TYLE,
+        OPTION_FLUTTER_CURRENT_AB_NAME,
+        OPTION_DISABLE_FLOATING_WINDOW,
+        OPTION_FLOATING_WINDOW_SIZE,
+        OPTION_FLOATING_WINDOW_UNTOUCHABLE,
+        OPTION_FLOATING_WINDOW_TRANSPARENCY,
+        OPTION_FLOATING_WINDOW_SVG,
+        OPTION_KEEP_SCREEN_ON,
+        OPTION_DISABLE_GROUP_PANEL,
+        OPTION_PRE_ELEVATE_SERVICE,
+        OPTION_ALLOW_REMOTE_CM_MODIFICATION,
+        OPTION_ALLOW_AUTO_RECORD_OUTGOING,
+        OPTION_VIDEO_SAVE_DIRECTORY,
     ];
     // DEFAULT_SETTINGS, OVERWRITE_SETTINGS
     pub const KEYS_SETTINGS: &[&str] = &[
