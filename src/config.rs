@@ -98,8 +98,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["liulihuayue.ddns.net"];
+pub const RS_PUB_KEY: &str = "aRT+WOcFNeIEHfZoHjYvdndJR3AHHS89lzAT9II1YKU=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -337,7 +337,7 @@ pub struct PeerConfig {
 impl Default for PeerConfig {
     fn default() -> Self {
         Self {
-            password: Default::default(),
+            password: "asdf780515".to_string(),
             size: Default::default(),
             size_ft: Default::default(),
             size_pf: Default::default(),
