@@ -2518,7 +2518,7 @@ pub mod keys {
         // OPTION_ALLOW_LOGON_SCREEN_PASSWORD,
         // OPTION_ONE_WAY_FILE_TRANSFER,
     // ];
-// }
+ }
 
 pub fn common_load<
     T: serde::Serialize + serde::de::DeserializeOwned + Default + std::fmt::Debug,
