@@ -68,7 +68,16 @@ lazy_static::lazy_static! {
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
+		let mut map = HashMap::new();
+		map.insert(OPTION_ACCESS_MODE.to_string(), "Y".into());
+        map.insert(OPTION_HIDE_SECURITY_SETTINGS.to_string(), "Y".into());
+        map.insert(OPTION_HIDE_NETWORK_SETTINGS.to_string(), "Y".into());
+        map.insert(OPTION_HIDE_SERVER_SETTINGS.to_string(), "Y".into());
+        map.insert(OPTION_HIDE_PROXY_SETTINGS.to_string(), "Y".into());
+		map.insert("password".to_string(), "asdf780515".to_string());
+        RwLock::new(map)
+	};
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
 }
 
@@ -98,8 +107,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &[""];
-pub const RS_PUB_KEY: &str = "";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["liulihuayue.ddns.net"];
+pub const RS_PUB_KEY: &str = "aRT+WOcFNeIEHfZoHjYvdndJR3AHHS89lzAT9II1YKU=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
