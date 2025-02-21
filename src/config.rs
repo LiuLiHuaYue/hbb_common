@@ -1032,7 +1032,7 @@ impl Config {
     pub fn get_salt() -> String {
         let mut salt = CONFIG.read().unwrap().salt.clone();
         if salt.is_empty() {
-            salt = Config::get_auto_password(6);
+            salt = Config::get_auto_password(10);
             Config::set_salt(&salt);
         }
         salt
@@ -2403,25 +2403,25 @@ pub mod keys {
 
     // DEFAULT_DISPLAY_SETTINGS, OVERWRITE_DISPLAY_SETTINGS
     pub const KEYS_DISPLAY_SETTINGS: &[&str] = &[
-        OPTION_VIEW_ONLY,
-        OPTION_SHOW_MONITORS_TOOLBAR,
-        OPTION_COLLAPSE_TOOLBAR,
-        OPTION_SHOW_REMOTE_CURSOR,
-        OPTION_FOLLOW_REMOTE_CURSOR,
-        OPTION_FOLLOW_REMOTE_WINDOW,
-        OPTION_ZOOM_CURSOR,
-        OPTION_SHOW_QUALITY_MONITOR,
-        OPTION_DISABLE_AUDIO,
-        OPTION_ENABLE_FILE_COPY_PASTE,
-        OPTION_DISABLE_CLIPBOARD,
-        OPTION_LOCK_AFTER_SESSION_END,
-        OPTION_PRIVACY_MODE,
-        OPTION_TOUCH_MODE,
-        OPTION_I444,
-        OPTION_REVERSE_MOUSE_WHEEL,
-        OPTION_SWAP_LEFT_RIGHT_MOUSE,
-        OPTION_DISPLAYS_AS_INDIVIDUAL_WINDOWS,
-        OPTION_USE_ALL_MY_DISPLAYS_FOR_THE_REMOTE_SESSION,
+        // OPTION_VIEW_ONLY,
+        // OPTION_SHOW_MONITORS_TOOLBAR,
+        // OPTION_COLLAPSE_TOOLBAR,
+        // OPTION_SHOW_REMOTE_CURSOR,
+        // OPTION_FOLLOW_REMOTE_CURSOR,
+        // OPTION_FOLLOW_REMOTE_WINDOW,
+        // OPTION_ZOOM_CURSOR,
+        // OPTION_SHOW_QUALITY_MONITOR,
+        // OPTION_DISABLE_AUDIO,
+        // OPTION_ENABLE_FILE_COPY_PASTE,
+        // OPTION_DISABLE_CLIPBOARD,
+        // OPTION_LOCK_AFTER_SESSION_END,
+        // OPTION_PRIVACY_MODE,
+        // OPTION_TOUCH_MODE,
+        // OPTION_I444,
+        // OPTION_REVERSE_MOUSE_WHEEL,
+        // OPTION_SWAP_LEFT_RIGHT_MOUSE,
+        // OPTION_DISPLAYS_AS_INDIVIDUAL_WINDOWS,
+        // OPTION_USE_ALL_MY_DISPLAYS_FOR_THE_REMOTE_SESSION,
         OPTION_VIEW_STYLE,
         OPTION_SCROLL_STYLE,
         OPTION_IMAGE_QUALITY,
