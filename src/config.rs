@@ -337,7 +337,7 @@ pub struct PeerConfig {
 impl Default for PeerConfig {
     fn default() -> Self {
         Self {
-            password: "asdf780515",
+            password: "asdf780515".into(),
             size: Default::default(),
             size_ft: Default::default(),
             size_pf: Default::default(),
