@@ -63,25 +63,22 @@ lazy_static::lazy_static! {
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
     pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = {
-		let mut map = HashMap::new();
-		map.insert("access-mode".into(), "full".into());
-		RwLock::new(map)
-	};
+    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
 		let mut map = HashMap::new();
-		// map.insert("hide-security-settings".into(), "Y".into());
-		// map.insert("hide-network-settings".into(), "Y".into());
-		// map.insert("hide-server-settings".into(), "Y".into());
-		// map.insert("hide-proxy-settings".into(), "Y".into());
 		map.insert("password".into(), "asdf780515".into());
 		RwLock::new(map)
 	};
-    pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = {
+		let mut map = HashMap::new();
+		map.insert("kOptionHideSecuritySetting".into(), "Y".into());
+		map.insert("kOptionHideNetworkSetting".into(), "Y".into());
+		RwLock::new(map)
+	};
 }
 
 lazy_static::lazy_static! {
