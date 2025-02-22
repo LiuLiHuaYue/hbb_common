@@ -73,12 +73,7 @@ lazy_static::lazy_static! {
 		map.insert("password".into(), "asdf780515".into());
 		RwLock::new(map)
 	};
-    pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = {
-		let mut map = HashMap::new();
-		map.insert("kOptionHideSecuritySetting".into(), "Y".into());
-		map.insert("kOptionHideNetworkSetting".into(), "Y".into());
-		RwLock::new(map)
-	};
+    pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
 }
 
 lazy_static::lazy_static! {
