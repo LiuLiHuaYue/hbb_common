@@ -107,7 +107,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["liulihuayue.ddns.net"];
-pub const RS_PUB_KEY: &str = "aRT+WOcFNeIEHfZoHjYvdndJR3AHHS89lzAT9II1YKU=";
+pub const RS_PUB_KEY: &str = "aRT+WOcFNeIEHfZoHjYvdndJR3AHHS89lzAT9II1YKU";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
