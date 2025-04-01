@@ -103,7 +103,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["rd.topwzx.com"];
-pub const RS_PUB_KEY: &str = "VZSOnqBkHXdwPqPlf2anvFg+hTsR3Wa6xDDpPTuU5CY=";
+pub const RS_PUB_KEY: &str = "DjZ7QLqT0FS6bpXclVkWAaJy6Wfpem76QhRxxtMqzo8=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
