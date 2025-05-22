@@ -68,11 +68,7 @@ lazy_static::lazy_static! {
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
-		let mut map = HashMap::new();
-		map.insert("password".into(), "Aa123456".into());
-		RwLock::new(map)
-	};
+    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
 }
 
@@ -102,8 +98,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["35.220.169.93"];
-pub const RS_PUB_KEY: &str = "JzYIgTGxTifL+2b4ecKiAH7fPdXBRpycG3TZfzanUSw=";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["remotesh.gaoce.cc"];
+pub const RS_PUB_KEY: &str = "fjDk53hl5s6nGqQZutFYUn7cWpkiy20xCfKzXqVHyCg=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
