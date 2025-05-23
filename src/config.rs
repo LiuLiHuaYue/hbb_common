@@ -98,11 +98,11 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["remotesh.gaoce.cc"];
-pub const RS_PUB_KEY: &str = "fjDk53hl5s6nGqQZutFYUn7cWpkiy20xCfKzXqVHyCg=";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["rustdesk.toalan.com"];
+pub const RS_PUB_KEY: &str = "NzUspQ40WvRKzAFiefiA5MUZ9nCRzsKLWs0YvBxFJKg=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
-pub const RELAY_PORT: i32 = 21117;
+pub const RELAY_PORT: i32 = 21119;
 pub const WS_RENDEZVOUS_PORT: i32 = 21118;
 pub const WS_RELAY_PORT: i32 = 21119;
 
