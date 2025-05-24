@@ -99,10 +99,10 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["rustdesk.toalan.com"];
-pub const RS_PUB_KEY: &str = "NzUspQ40WvRKzAFiefiA5MUZ9nCRzsKLWs0YvBxFJKg=";
+pub const RS_PUB_KEY: &str = "6T61AQN2PKUOfekc3HbwqTNxNQ6TmJEf37UM5Wsy7e4=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
-pub const RELAY_PORT: i32 = 21119;
+pub const RELAY_PORT: i32 = 21117;
 pub const WS_RENDEZVOUS_PORT: i32 = 21118;
 pub const WS_RELAY_PORT: i32 = 21119;
 
