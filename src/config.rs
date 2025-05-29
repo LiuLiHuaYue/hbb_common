@@ -612,7 +612,7 @@ impl Config {
 
     pub fn get_home() -> PathBuf {
         #[cfg(any(target_os = "android", target_os = "ios"))]
-        return PathBuf::from("NUL")
+        return PathBuf::from("NUL");
         #[cfg(not(any(target_os = "android", target_os = "ios")))]
         {
             if let Some(path) = dirs_next::home_dir() {
