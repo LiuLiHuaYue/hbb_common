@@ -70,6 +70,8 @@ lazy_static::lazy_static! {
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
+    pub static ref RENDEZVOUS_SERVERS: RwLock<Vec<String>> =RwLock::new(vec!["rs-ny.rustdesk.com".to_string()]);
+    pub static ref RS_PUB_KEY: RwLock<String> = RwLock::new("OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=".to_string());
 }
 
 lazy_static::lazy_static! {
@@ -79,8 +81,6 @@ lazy_static::lazy_static! {
 #[cfg(any(target_os = "android", target_os = "ios"))]
 lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
-    pub static ref RENDEZVOUS_SERVERS: RwLock<Vec<String>> =RwLock::new(vec!["rs-ny.rustdesk.com".to_string()]);
-    pub static ref RS_PUB_KEY: RwLock<String> = RwLock::new("OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=".to_string());
 }
 
 pub const LINK_DOCS_HOME: &str = "https://rustdesk.com/docs/en/";
