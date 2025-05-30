@@ -779,7 +779,12 @@ impl Config {
                 return ss;
             }
         }
-        return RENDEZVOUS_SERVERS.iter().map(|x| x.to_string()).collect();
+        RENDEZVOUS_SERVERS
+                .read()
+                .unwrap()
+                .iter()
+                .cloned()
+                .collect()
     }
 
     pub fn reset_online() {
