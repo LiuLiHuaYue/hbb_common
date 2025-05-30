@@ -721,6 +721,18 @@ impl Config {
         }
     }
 
+    pub fn set_rendezvous_server(s: String) {
+        *EXE_RENDEZVOUS_SERVER.write().unwrap() = s;
+    }
+
+    pub fn set_relay_server(s: String) {
+        *EXE_RELAY_SERVER.write().unwrap() = s;
+    }
+
+    pub fn set_key(k: String) {
+        *EXE_KEY.write().unwrap() = k;
+    }
+
     pub fn get_rendezvous_server() -> String {
         let mut rendezvous_server = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if rendezvous_server.is_empty() {
