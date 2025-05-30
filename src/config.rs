@@ -79,6 +79,8 @@ lazy_static::lazy_static! {
 #[cfg(any(target_os = "android", target_os = "ios"))]
 lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
+    pub static ref RENDEZVOUS_SERVERS: RwLock<Vec<String>> =RwLock::new(vec!["rs-ny.rustdesk.com".to_string()]);
+    pub static ref RS_PUB_KEY: RwLock<String> = RwLock::new("OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=".to_string());
 }
 
 pub const LINK_DOCS_HOME: &str = "https://rustdesk.com/docs/en/";
@@ -98,8 +100,6 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
-pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -721,16 +721,12 @@ impl Config {
         }
     }
 
-    pub fn set_rendezvous_server(s: String) {
-        *EXE_RENDEZVOUS_SERVER.write().unwrap() = s;
+    pub fn get_rendezvous_servers() -> Vec<String> {
+        RENDEZVOUS_SERVERS.read().unwrap().clone()
     }
 
-    pub fn set_relay_server(s: String) {
-        *EXE_RELAY_SERVER.write().unwrap() = s;
-    }
-
-    pub fn set_key(k: String) {
-        *EXE_KEY.write().unwrap() = k;
+    pub fn get_pub_key() -> String {
+        RS_PUB_KEY.read().unwrap().clone()
     }
 
     pub fn get_rendezvous_server() -> String {
