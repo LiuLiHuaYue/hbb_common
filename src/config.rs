@@ -721,12 +721,15 @@ impl Config {
         }
     }
 
-    pub fn get_rendezvous_servers() -> Vec<String> {
-        RENDEZVOUS_SERVERS.read().unwrap().clone()
+    pub fn set_rendezvous_servers(new_servers: Vec<String>) {
+        let mut servers = RENDEZVOUS_SERVERS.write().unwrap();
+        servers.clear();
+        servers.extend(new_servers);
     }
 
-    pub fn get_pub_key() -> String {
-        RS_PUB_KEY.read().unwrap().clone()
+    pub fn set_key(new_key: &str) {
+        let mut key = RS_PUB_KEY.write().unwrap();
+        *key = new_key.to_string();
     }
 
     pub fn get_rendezvous_server() -> String {
