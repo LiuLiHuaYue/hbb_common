@@ -70,8 +70,6 @@ lazy_static::lazy_static! {
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref RENDEZVOUS_SERVERS: RwLock<Vec<String>> =RwLock::new(vec!["rs-ny.rustdesk.com".to_string()]);
-    pub static ref RS_PUB_KEY: RwLock<String> = RwLock::new("OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=".to_string());
 }
 
 lazy_static::lazy_static! {
@@ -100,6 +98,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
+pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
+pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -721,17 +721,6 @@ impl Config {
         }
     }
 
-    pub fn set_rendezvous_servers(new_servers: Vec<String>) {
-        let mut servers = RENDEZVOUS_SERVERS.write().unwrap();
-        servers.clear();
-        servers.extend(new_servers);
-    }
-
-    pub fn set_key(new_key: &str) {
-        let mut key = RS_PUB_KEY.write().unwrap();
-        *key = new_key.to_string();
-    }
-
     pub fn get_rendezvous_server() -> String {
         let mut rendezvous_server = EXE_RENDEZVOUS_SERVER.read().unwrap().clone();
         if rendezvous_server.is_empty() {
@@ -779,12 +768,7 @@ impl Config {
                 return ss;
             }
         }
-        RENDEZVOUS_SERVERS
-                .read()
-                .unwrap()
-                .iter()
-                .cloned()
-                .collect()
+        return RENDEZVOUS_SERVERS.iter().map(|x| x.to_string()).collect();
     }
 
     pub fn reset_online() {
