@@ -626,38 +626,33 @@ impl Config {
     }
 
     pub fn path<P: AsRef<Path>>(p: P) -> PathBuf {
-        return PathBuf::from("NUL")
+        #[cfg(any(target_os = "android", target_os = "ios"))]
+        {
+            let mut path: PathBuf = APP_DIR.read().unwrap().clone().into();
+            path.push(p);
+            return path;
+        }
+        #[cfg(not(any(target_os = "android", target_os = "ios")))]
+        {
+            #[cfg(not(target_os = "macos"))]
+            let org = "".to_owned();
+            #[cfg(target_os = "macos")]
+            let org = ORG.read().unwrap().clone();
+            // /var/root for root
+            if let Some(project) =
+                directories_next::ProjectDirs::from("", &org, &APP_NAME.read().unwrap())
+            {
+                let mut path = patch(project.config_dir().to_path_buf());
+                path.push(p);
+                return path;
+            }
+            "".into()
+        }
     }
 
     #[allow(unreachable_code)]
     pub fn log_path() -> PathBuf {
-        #[cfg(target_os = "macos")]
-        {
-            if let Some(path) = dirs_next::home_dir().as_mut() {
-                path.push(format!("Library/Logs/{}", *APP_NAME.read().unwrap()));
-                return path.clone();
-            }
-        }
-        #[cfg(target_os = "linux")]
-        {
-            let mut path = Self::get_home();
-            path.push(format!(".local/share/logs/{}", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
-        }
-        #[cfg(target_os = "android")]
-        {
-            let mut path = Self::get_home();
-            path.push(format!("{}/Logs", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
-        }
-        if let Some(path) = Self::path("").parent() {
-            let mut path: PathBuf = path.into();
-            path.push("log");
-            return path;
-        }
-        "".into()
+        return PathBuf::from("NUL")
     }
 
     pub fn ipc_path(postfix: &str) -> String {
