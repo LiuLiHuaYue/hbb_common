@@ -103,7 +103,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["liulihuayue.com"];
+pub const RENDEZVOUS_SERVERS: &[&str] = &["liulihuayue.cn"];
 pub const RS_PUB_KEY: &str = "aRT+WOcFNeIEHfZoHjYvdndJR3AHHS89lzAT9II1YKU=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
