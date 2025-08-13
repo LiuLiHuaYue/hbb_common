@@ -63,19 +63,14 @@ lazy_static::lazy_static! {
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
     pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = {
-                                                                       		let mut map = HashMap::new();
-                                                                       		map.insert("access-mode".into(), "full".into()); //完全控制
-                                                                       		map.insert("direct-server".into(), "Y".into());  //IP直连
-                                                                       		RwLock::new(map)
-                                                                       	};
+    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
                                                                   		let mut map = HashMap::new();
-                                                                  		map.insert("as789456".into(), "asdf780515".into());
+                                                                  		map.insert("password".into(), "as789456".into());
                                                                   		RwLock::new(map)
                                                                   	};
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
@@ -662,7 +657,33 @@ impl Config {
 
     #[allow(unreachable_code)]
     pub fn log_path() -> PathBuf {
-        return PathBuf::from("NUL")
+        #[cfg(target_os = "macos")]
+        {
+            if let Some(path) = dirs_next::home_dir().as_mut() {
+                path.push(format!("Library/Logs/{}", *APP_NAME.read().unwrap()));
+                return path.clone();
+            }
+        }
+        #[cfg(target_os = "linux")]
+        {
+            let mut path = Self::get_home();
+            path.push(format!(".local/share/logs/{}", *APP_NAME.read().unwrap()));
+            std::fs::create_dir_all(&path).ok();
+            return path;
+        }
+        #[cfg(target_os = "android")]
+        {
+            let mut path = Self::get_home();
+            path.push(format!("{}/Logs", *APP_NAME.read().unwrap()));
+            std::fs::create_dir_all(&path).ok();
+            return path;
+        }
+        if let Some(path) = Self::path("").parent() {
+            let mut path: PathBuf = path.into();
+            path.push("log");
+            return path;
+        }
+        "".into()
     }
 
     pub fn ipc_path(postfix: &str) -> String {
@@ -2376,7 +2397,7 @@ pub fn use_ws() -> bool {
 }
 
 pub mod keys {
-pub const OPTION_AUTH_KEY: &str = "auth_key";
+    pub const OPTION_AUTH_KEY: &str = "auth_key";
     pub const OPTION_VIEW_ONLY: &str = "view_only";
     pub const OPTION_SHOW_MONITORS_TOOLBAR: &str = "show_monitors_toolbar";
     pub const OPTION_COLLAPSE_TOOLBAR: &str = "collapse_toolbar";
