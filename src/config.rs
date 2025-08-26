@@ -58,26 +58,17 @@ lazy_static::lazy_static! {
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
     pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
     pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
-    pub static ref APP_NAME: RwLock<String> = RwLock::new("liulihuayue".to_owned());
+    pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
     pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = {
-                                                                       		let mut map = HashMap::new();
-                                                                       		map.insert("access-mode".into(), "full".into()); //完全控制
-                                                                       		map.insert("direct-server".into(), "Y".into());  //IP直连
-                                                                       		RwLock::new(map)
-                                                                       	};
+    pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_DISPLAY_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref DEFAULT_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_LOCAL_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
-    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = {
-                                                                  		let mut map = HashMap::new();
-                                                                  		map.insert("password".into(), "li123123".into());
-                                                                  		RwLock::new(map)
-                                                                  	};
+    pub static ref HARD_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref BUILTIN_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
 }
 
@@ -109,13 +100,13 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["rustdesk10.4304.cn"]; //非默认端口，用的bind设定
-pub const RS_PUB_KEY: &str = "Oyundazhe01";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
+pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
-pub const RENDEZVOUS_PORT: i32 = 29996;
-pub const RELAY_PORT: i32 = 29997;
-pub const WS_RENDEZVOUS_PORT: i32 = 29998;
-pub const WS_RELAY_PORT: i32 = 29999;
+pub const RENDEZVOUS_PORT: i32 = 21116;
+pub const RELAY_PORT: i32 = 21117;
+pub const WS_RENDEZVOUS_PORT: i32 = 21118;
+pub const WS_RELAY_PORT: i32 = 21119;
 
 macro_rules! serde_field_string {
     ($default_func:ident, $de_func:ident, $default_expr:expr) => {
@@ -662,7 +653,33 @@ impl Config {
 
     #[allow(unreachable_code)]
     pub fn log_path() -> PathBuf {
-        return PathBuf::from("NUL")
+        #[cfg(target_os = "macos")]
+        {
+            if let Some(path) = dirs_next::home_dir().as_mut() {
+                path.push(format!("Library/Logs/{}", *APP_NAME.read().unwrap()));
+                return path.clone();
+            }
+        }
+        #[cfg(target_os = "linux")]
+        {
+            let mut path = Self::get_home();
+            path.push(format!(".local/share/logs/{}", *APP_NAME.read().unwrap()));
+            std::fs::create_dir_all(&path).ok();
+            return path;
+        }
+        #[cfg(target_os = "android")]
+        {
+            let mut path = Self::get_home();
+            path.push(format!("{}/Logs", *APP_NAME.read().unwrap()));
+            std::fs::create_dir_all(&path).ok();
+            return path;
+        }
+        if let Some(path) = Self::path("").parent() {
+            let mut path: PathBuf = path.into();
+            path.push("log");
+            return path;
+        }
+        "".into()
     }
 
     pub fn ipc_path(postfix: &str) -> String {
