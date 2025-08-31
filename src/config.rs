@@ -653,33 +653,14 @@ impl Config {
 
     #[allow(unreachable_code)]
     pub fn log_path() -> PathBuf {
-        #[cfg(target_os = "macos")]
+		#[cfg(target_os = "windows")]
         {
-            if let Some(path) = dirs_next::home_dir().as_mut() {
-                path.push(format!("Library/Logs/{}", *APP_NAME.read().unwrap()));
-                return path.clone();
-            }
+            PathBuf::from("NUL")
         }
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "macos", target_os = "linux", target_os = "android"))]
         {
-            let mut path = Self::get_home();
-            path.push(format!(".local/share/logs/{}", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
+            PathBuf::from("/dev/null")
         }
-        #[cfg(target_os = "android")]
-        {
-            let mut path = Self::get_home();
-            path.push(format!("{}/Logs", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
-        }
-        if let Some(path) = Self::path("").parent() {
-            let mut path: PathBuf = path.into();
-            path.push("log");
-            return path;
-        }
-        "".into()
     }
 
     pub fn ipc_path(postfix: &str) -> String {
