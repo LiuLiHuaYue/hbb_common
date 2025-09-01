@@ -661,6 +661,7 @@ impl Config {
         {
             return PathBuf::from("/dev/null")
         }
+        return PathBuf::from("NUL");
     }
 
     pub fn ipc_path(postfix: &str) -> String {
