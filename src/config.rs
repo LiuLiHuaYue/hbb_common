@@ -655,11 +655,11 @@ impl Config {
     pub fn log_path() -> PathBuf {
         #[cfg(target_os = "windows")]
         {
-            PathBuf::from("NUL")
+            return PathBuf::from("NUL")
         }
         #[cfg(any(target_os = "macos", target_os = "linux", target_os = "android"))]
         {
-            PathBuf::from("/dev/null")
+            return PathBuf::from("/dev/null")
         }
     }
 
