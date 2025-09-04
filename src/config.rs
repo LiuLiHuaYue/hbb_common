@@ -65,7 +65,7 @@ lazy_static::lazy_static! {
     pub static ref DEFAULT_SETTINGS: RwLock<HashMap<String, String>> = Default::default();
     pub static ref OVERWRITE_SETTINGS: RwLock<HashMap<String, String>> = {
                                                                         let mut map = HashMap::new();
-                                                                        map.insert("lang".into(), "zh_cn".into()); // 完全控制
+                                                                        map.insert("lang".into(), "zh-cn".into()); // 完全控制
                                                                         map.insert("theme".into(), "dark".into()); // IP直连
                                                                         RwLock::new(map)
                                                                        };
