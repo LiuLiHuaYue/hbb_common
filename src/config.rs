@@ -58,7 +58,7 @@ lazy_static::lazy_static! {
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
     pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
     pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
-    pub static ref APP_NAME: RwLock<String> = RwLock::new("GuLingTong".to_owned());
+    pub static ref APP_NAME: RwLock<String> = RwLock::new("LiuLiHuaYue".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
@@ -653,33 +653,15 @@ impl Config {
 
     #[allow(unreachable_code)]
     pub fn log_path() -> PathBuf {
-        #[cfg(target_os = "macos")]
+        #[cfg(target_os = "windows")]
         {
-            if let Some(path) = dirs_next::home_dir().as_mut() {
-                path.push(format!("Library/Logs/{}", *APP_NAME.read().unwrap()));
-                return path.clone();
-            }
+            return PathBuf::from("NUL")
         }
-        #[cfg(target_os = "linux")]
+        #[cfg(any(target_os = "macos", target_os = "linux", target_os = "android"))]
         {
-            let mut path = Self::get_home();
-            path.push(format!(".local/share/logs/{}", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
+            return PathBuf::from("/dev/null")
         }
-        #[cfg(target_os = "android")]
-        {
-            let mut path = Self::get_home();
-            path.push(format!("{}/Logs", *APP_NAME.read().unwrap()));
-            std::fs::create_dir_all(&path).ok();
-            return path;
-        }
-        if let Some(path) = Self::path("").parent() {
-            let mut path: PathBuf = path.into();
-            path.push("log");
-            return path;
-        }
-        "".into()
+        return PathBuf::from("NUL");
     }
 
     pub fn ipc_path(postfix: &str) -> String {
