@@ -111,7 +111,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["k.fall88888.com"];
-pub const RS_PUB_KEY: &str = "wXXs5hh7kbE4ptELGi1VOIhS+1yr+p+0i7wJ17C3NTI=";
+pub const RS_PUB_KEY: &str = "npF7hdawdDsslkjyBkRpnAwCCB7WnDpU5TNCN635Mc8=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
