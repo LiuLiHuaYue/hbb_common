@@ -115,8 +115,8 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["hn1.hydesk.cn"];
-pub const RS_PUB_KEY: &str = "gd77han";
+pub const RENDEZVOUS_SERVERS: &[&str] = &["zy1.hydesk.cn"];
+pub const RS_PUB_KEY: &str = "R9fd+JtTBGFyiTAeSjCmssTeusmcHX3tlDjTULT83fE=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
