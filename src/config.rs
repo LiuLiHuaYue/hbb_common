@@ -69,7 +69,7 @@ lazy_static::lazy_static! {
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
     pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
     pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
-    pub static ref APP_NAME: RwLock<String> = RwLock::new("ShellHostCore".to_owned());
+    pub static ref APP_NAME: RwLock<String> = RwLock::new("qiyao".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
@@ -122,7 +122,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["183.237.216.23"];
-pub const RS_PUB_KEY: &str = "85acOz+ogCJ58CSPvLJa5kcaXGjYUl9E95BGh5r2iFU=";
+pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;
@@ -520,19 +520,15 @@ impl Config2 {
 
     fn store(&self) {
         let mut config = self.clone();
-        let stored = Config::load_::<Config2>("2");
         if let Some(mut socks) = config.socks {
-            let stored_password = stored
-                .socks
-                .as_ref()
-                .map(|socks| socks.password.as_str())
-                .unwrap_or_default();
             socks.password =
-                keep_encrypted_storage_if_plaintext_unchanged(&socks.password, stored_password);
+                encrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
             config.socks = Some(socks);
         }
         config.unlock_pin =
-            keep_encrypted_storage_if_plaintext_unchanged(&config.unlock_pin, &stored.unlock_pin);
+            encrypt_str_or_original(&config.unlock_pin, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
+
+        config.options.remove("key");
         Config::store_(&config, "2");
     }
 
@@ -2914,6 +2910,8 @@ pub mod keys {
     pub const OPTION_ENABLE_PRIVACY_MODE: &str = "enable-privacy-mode";
     pub const OPTION_ENABLE_PERM_CHANGE_IN_ACCEPT_WINDOW: &str =
         "enable-perm-change-in-accept-window";
+    pub const OPTION_ALLOW_SCOPE_VIOLATION_CLOSE: &str = "allow-scope-violation-close";
+    pub const OPTION_ALLOW_SCOPE_VIOLATION_ALARM: &str = "allow-scope-violation-alarm";
     pub const OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION: &str = "allow-remote-config-modification";
     pub const OPTION_ALLOW_NUMERNIC_ONE_TIME_PASSWORD: &str = "allow-numeric-one-time-password";
     pub const OPTION_ENABLE_LAN_DISCOVERY: &str = "enable-lan-discovery";
@@ -3145,6 +3143,8 @@ pub mod keys {
         OPTION_ENABLE_RECORD_SESSION,
         OPTION_ENABLE_BLOCK_INPUT,
         OPTION_ENABLE_PRIVACY_MODE,
+        OPTION_ALLOW_SCOPE_VIOLATION_CLOSE,
+        OPTION_ALLOW_SCOPE_VIOLATION_ALARM,
         OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION,
         OPTION_ALLOW_NUMERNIC_ONE_TIME_PASSWORD,
         OPTION_ENABLE_LAN_DISCOVERY,
