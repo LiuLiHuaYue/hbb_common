@@ -121,7 +121,7 @@ const CHARS: &[char] = &[
     'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 ];
 
-pub const RENDEZVOUS_SERVERS: &[&str] = &["183.237.216.23"];
+pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];
 pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
@@ -519,18 +519,18 @@ impl Config2 {
     }
 
     fn store(&self) {
-        let mut config = self.clone();
-        if let Some(mut socks) = config.socks {
-            socks.password =
-                encrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
-            config.socks = Some(socks);
-        }
-        config.unlock_pin =
-            encrypt_str_or_original(&config.unlock_pin, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
+            let mut config = self.clone();
+            if let Some(mut socks) = config.socks {
+                socks.password =
+                    encrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
+                config.socks = Some(socks);
+            }
+            config.unlock_pin =
+                encrypt_str_or_original(&config.unlock_pin, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
 
-        config.options.remove("key");
-        Config::store_(&config, "2");
-    }
+            config.options.remove("key");
+            Config::store_(&config, "2");
+        }
 
     pub fn get() -> Config2 {
         return CONFIG2.read().unwrap().clone();
