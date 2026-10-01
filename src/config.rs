@@ -69,7 +69,7 @@ lazy_static::lazy_static! {
     static ref ONLINE: Mutex<HashMap<String, i64>> = Default::default();
     pub static ref PROD_RENDEZVOUS_SERVER: RwLock<String> = RwLock::new("".to_owned());
     pub static ref EXE_RENDEZVOUS_SERVER: RwLock<String> = Default::default();
-    pub static ref APP_NAME: RwLock<String> = RwLock::new("LiuLiHua".to_owned());
+    pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());
     static ref KEY_PAIR: Mutex<Option<KeyPair>> = Default::default();
     static ref USER_DEFAULT_CONFIG: RwLock<(UserDefaultConfig, Instant)> = RwLock::new((UserDefaultConfig::load(), Instant::now()));
     pub static ref NEW_STORED_PEER_CONFIG: Mutex<HashSet<String>> = Default::default();
@@ -97,8 +97,8 @@ lazy_static::lazy_static! {
     pub static ref APP_HOME_DIR: RwLock<String> = Default::default();
 }
 
-pub const LINK_DOCS_HOME: &str = "https://www.baidu.com/docs/en/";
-pub const LINK_DOCS_X11_REQUIRED: &str = "https://www.baidu.com/docs/en/manual/linux/#x11-required";
+pub const LINK_DOCS_HOME: &str = "https://rustdesk.com/docs/en/";
+pub const LINK_DOCS_X11_REQUIRED: &str = "https://rustdesk.com/docs/en/manual/linux/#x11-required";
 pub const LINK_HEADLESS_LINUX_SUPPORT: &str =
     "https://github.com/rustdesk/rustdesk/wiki/Headless-Linux-Support";
 
@@ -515,22 +515,18 @@ impl Config2 {
     }
 
     fn store(&self) {
-        let mut config = self.clone();
-        let stored = Config::load_::<Config2>("2");
-        if let Some(mut socks) = config.socks {
-            let stored_password = stored
-                .socks
-                .as_ref()
-                .map(|socks| socks.password.as_str())
-                .unwrap_or_default();
-            socks.password =
-                keep_encrypted_storage_if_plaintext_unchanged(&socks.password, stored_password);
-            config.socks = Some(socks);
+            let mut config = self.clone();
+            if let Some(mut socks) = config.socks {
+                socks.password =
+                    encrypt_str_or_original(&socks.password, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
+                config.socks = Some(socks);
+            }
+            config.unlock_pin =
+                encrypt_str_or_original(&config.unlock_pin, PASSWORD_ENC_VERSION, ENCRYPT_MAX_LEN);
+
+            config.options.remove("key");
+            Config::store_(&config, "2");
         }
-        config.unlock_pin =
-            keep_encrypted_storage_if_plaintext_unchanged(&config.unlock_pin, &stored.unlock_pin);
-        Config::store_(&config, "2");
-    }
 
     pub fn get() -> Config2 {
         return CONFIG2.read().unwrap().clone();
