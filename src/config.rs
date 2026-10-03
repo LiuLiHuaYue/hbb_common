@@ -59,6 +59,12 @@ lazy_static::lazy_static! {
 
 type Size = (i32, i32, i32, i32);
 type KeyPair = (Vec<u8>, Vec<u8>);
+static AUTH_CONNECTION_KEY_STATE: std::sync::atomic::AtomicU64 =
+    std::sync::atomic::AtomicU64::new(1);
+static AUTH_CONNECTION_KEY_PENDING_CLEAR: std::sync::atomic::AtomicU64 =
+    std::sync::atomic::AtomicU64::new(0);
+static AUTH_CONNECTION_KEY_CLEAR_RUNNING: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
 
 lazy_static::lazy_static! {
     static ref CONFIG: RwLock<Config> = RwLock::new(Config::load());
@@ -529,6 +535,7 @@ impl Config2 {
         }
         config.unlock_pin =
             keep_encrypted_storage_if_plaintext_unchanged(&config.unlock_pin, &stored.unlock_pin);
+        config.options.remove("key");
         Config::store_(&config, "2");
     }
 
@@ -591,6 +598,93 @@ pub fn store_path<T: serde::Serialize>(path: PathBuf, cfg: T) -> crate::ResultTy
 }
 
 impl Config {
+    pub fn auth_connection_key_epoch() -> u64 {
+        AUTH_CONNECTION_KEY_STATE.load(std::sync::atomic::Ordering::Acquire)
+    }
+
+    pub fn get_auth_connection_key() -> String {
+        let epoch = Self::auth_connection_key_epoch();
+        if epoch & 1 != 0 { return String::new(); }
+        let Ok(config) = CONFIG2.read() else { return String::new(); };
+        let key = config.options.get("key").cloned().unwrap_or_default();
+        if Self::auth_connection_key_epoch() != epoch { return String::new(); }
+        key
+    }
+
+    pub fn set_auth_connection_key_if(
+        key: String,
+        epoch: u64,
+        mut is_current: impl FnMut() -> bool,
+    ) -> bool {
+        let Ok(mut config) = CONFIG2.try_write() else { return false; };
+        if key.is_empty() || Self::auth_connection_key_epoch() != epoch || !is_current() {
+            return false;
+        }
+        let Some(active_epoch) = epoch.checked_add(epoch & 1) else { return false; };
+        config.options.insert("key".to_owned(), key);
+        if !is_current() || AUTH_CONNECTION_KEY_STATE.compare_exchange(
+            epoch, active_epoch, std::sync::atomic::Ordering::AcqRel,
+            std::sync::atomic::Ordering::Acquire).is_err() {
+            config.options.remove("key");
+            return false;
+        }
+        true
+    }
+
+    fn clear_auth_connection_key_once(epoch: u64) -> bool {
+        let Ok(mut config) = CONFIG2.try_write() else { return false; };
+        if epoch & 1 != 0 && Self::auth_connection_key_epoch() == epoch {
+            config.options.remove("key");
+        }
+        true
+    }
+
+    fn start_auth_connection_key_cleanup() {
+        use std::sync::atomic::Ordering;
+        if AUTH_CONNECTION_KEY_CLEAR_RUNNING.compare_exchange(
+            false, true, Ordering::AcqRel, Ordering::Acquire).is_err() {
+            return;
+        }
+        let worker = std::thread::Builder::new().name("auth-key-cleanup".to_owned()).spawn(|| {
+            loop {
+                let epoch = AUTH_CONNECTION_KEY_PENDING_CLEAR.load(Ordering::Acquire);
+                if epoch == 0 {
+                    AUTH_CONNECTION_KEY_CLEAR_RUNNING.store(false, Ordering::Release);
+                    if AUTH_CONNECTION_KEY_PENDING_CLEAR.load(Ordering::Acquire) == 0
+                        || AUTH_CONNECTION_KEY_CLEAR_RUNNING.compare_exchange(
+                            false, true, Ordering::AcqRel, Ordering::Acquire).is_err() {
+                        return;
+                    }
+                    continue;
+                }
+                if Config::clear_auth_connection_key_once(epoch) {
+                    let _ = AUTH_CONNECTION_KEY_PENDING_CLEAR.compare_exchange(
+                        epoch, 0, Ordering::AcqRel, Ordering::Acquire);
+                } else {
+                    std::thread::sleep(std::time::Duration::from_millis(10));
+                }
+            }
+        });
+        if worker.is_err() { std::process::abort(); }
+    }
+
+    pub fn invalidate_auth_connection_key() -> u64 {
+        use std::sync::atomic::Ordering;
+        let epoch = match AUTH_CONNECTION_KEY_STATE.fetch_update(
+            Ordering::AcqRel, Ordering::Acquire, |state| state.checked_add(2).map(|next| next | 1)) {
+            Ok(previous) => (previous + 2) | 1,
+            Err(_) => std::process::abort(),
+        };
+        AUTH_CONNECTION_KEY_PENDING_CLEAR.fetch_max(epoch, Ordering::AcqRel);
+        if Self::clear_auth_connection_key_once(epoch) {
+            let _ = AUTH_CONNECTION_KEY_PENDING_CLEAR.compare_exchange(
+                epoch, 0, Ordering::AcqRel, Ordering::Acquire);
+        }
+        if AUTH_CONNECTION_KEY_PENDING_CLEAR.load(Ordering::Acquire) != 0 {
+            Self::start_auth_connection_key_cleanup();
+        }
+        epoch
+    }
     fn load_<T: serde::Serialize + serde::de::DeserializeOwned + Default + std::fmt::Debug>(
         suffix: &str,
     ) -> T {
@@ -1243,14 +1337,17 @@ impl Config {
     }
 
     pub fn get_option(k: &str) -> String {
-        get_or(
-            &OVERWRITE_SETTINGS,
-            &CONFIG2.read().unwrap().options,
-            &DEFAULT_SETTINGS,
-            k,
-        )
-        .unwrap_or_default()
-    }
+            if k == "key" {
+                return Self::get_auth_connection_key();
+            }
+            get_or(
+                &OVERWRITE_SETTINGS,
+                &CONFIG2.read().unwrap().options,
+                &DEFAULT_SETTINGS,
+                k,
+            )
+            .unwrap_or_default()
+        }
 
     pub fn get_bool_option(k: &str) -> bool {
         option2bool(k, &Self::get_option(k))
